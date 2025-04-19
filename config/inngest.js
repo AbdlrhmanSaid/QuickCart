@@ -12,13 +12,20 @@ export const saveUser = inngest.createFunction(
   },
   { event: "clerk/user.created" },
   async ({ event }) => {
-    const { id, fist_name, last_name, email_address, image_url } = event.data;
+    const { id, first_name, last_name, email_address, image_url } = event.data;
+
+    const email =
+      Array.isArray(email_address) && email_address.length > 0
+        ? email_address[0].email_address
+        : "";
+
     const userData = {
       _id: id,
-      name: `${fist_name} ${last_name}`,
-      email: email_address[0].email_address,
+      name: `${first_name} ${last_name}`,
+      email,
       imageURl: image_url,
     };
+
     await dbConnect();
     await User.create(userData);
   }
