@@ -12,22 +12,29 @@ export const saveUser = inngest.createFunction(
   },
   { event: "clerk/user.created" },
   async ({ event }) => {
-    const { id, first_name, last_name, email_address, image_url } = event.data;
+    try {
+      const { id, first_name, last_name, email_addresses, image_url } =
+        event.data;
 
-    const email =
-      Array.isArray(email_address) && email_address.length > 0
-        ? email_address[0].email_address
-        : "";
+      const email =
+        Array.isArray(email_addresses) && email_addresses.length > 0
+          ? email_addresses[0]?.email_address || ""
+          : "";
 
-    const userData = {
-      _id: id,
-      name: `${first_name} ${last_name}`,
-      email,
-      imageURl: image_url,
-    };
+      const userData = {
+        _id: id,
+        name: `${first_name} ${last_name}`,
+        email,
+        imageUrl: image_url, // خلي بالك من الـ camelCase
+      };
 
-    await dbConnect();
-    await User.create(userData);
+      await dbConnect();
+      await User.create(userData);
+      console.log("✅ User synced successfully");
+    } catch (err) {
+      console.error("❌ Error syncing user:", err);
+      throw err;
+    }
   }
 );
 
@@ -38,11 +45,12 @@ export const updateUser = inngest.createFunction(
   },
   { event: "clerk/user.updated" },
   async ({ event }) => {
-    const { id, fist_name, last_name, email_address, image_url } = event.data;
+    const { id, first_name, last_name, email_addresses, image_url } =
+      event.data;
     const userData = {
       _id: id,
-      name: `${fist_name} ${last_name}`,
-      email: email_address[0].email_address,
+      name: `${first_name} ${last_name}`,
+      email: email_addresses[0].email_addresses,
       imageURl: image_url,
     };
     await dbConnect();
