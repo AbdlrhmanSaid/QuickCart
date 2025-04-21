@@ -33,7 +33,7 @@ const Navbar = () => {
           Contact
         </Link>
 
-        {isSeller && (
+        {user && isSeller && (
           <button
             onClick={() => router.push("/seller")}
             className="text-xs border px-4 py-1.5 rounded-full"
@@ -49,7 +49,7 @@ const Navbar = () => {
       </ul>
 
       <div className="flex items-center md:hidden gap-3">
-        {isSeller && (
+        {user && isSeller && (
           <button
             onClick={() => router.push("/seller")}
             className="text-xs border px-4 py-1.5 rounded-full"
