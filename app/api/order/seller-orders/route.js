@@ -11,26 +11,33 @@ export async function GET(request) {
 
     if (!isSeller) {
       return NextResponse.json(
-        { message: "You are not a seller" },
+        { message: "Unauthorized access" },
         { status: 403 }
       );
     }
 
     await dbConnect();
 
-    // Get orders where products belong to the current seller
+    // التعديل 1: إضافة تصفية أولية للطلبات
     const orders = await Order.find({})
-      .populate("address")
+      .populate({
+        path: "address",
+        model: "Address",
+      })
       .populate({
         path: "items.product",
-        match: { userId: userId }, // التعديل هنا: استخدام userId بدل seller
-      });
+        model: "Product",
+        match: { userId: userId },
+      })
+      .lean(); // تحويل النتيجة إلى object عادي
 
-    // تصفية الطلبات التي تحتوي على منتجات البائع الحالي
+    // التعديل 2: معالجة أكثر أمانًا للبيانات
     const filteredOrders = orders
       .map((order) => ({
-        ...order.toObject(),
-        items: order.items.filter((item) => item.product !== null),
+        ...order,
+        items: order.items.filter(
+          (item) => item.product && item.product.userId === userId
+        ),
       }))
       .filter((order) => order.items.length > 0);
 
@@ -42,6 +49,10 @@ export async function GET(request) {
       { status: 200 }
     );
   } catch (error) {
-    return NextResponse.json({ message: error.message }, { status: 500 });
+    console.error("Server error details:", error);
+    return NextResponse.json(
+      { message: "Internal server error - " + error.message },
+      { status: 500 }
+    );
   }
 }

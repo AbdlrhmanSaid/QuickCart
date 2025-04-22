@@ -15,13 +15,16 @@ const orderSchema = new mongoose.Schema({
   amount: { type: Number, required: true },
   address: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "address",
+    ref: "Address",
     required: true,
   },
-  status: { type: String, default: "Order Placed", required: true },
+  status: {
+    type: String,
+    default: "Order Placed",
+    required: true,
+  },
   date: { type: Date, required: true },
 });
 
-// Create or get the Order model
 const Order = mongoose.models.Order || mongoose.model("Order", orderSchema);
 export default Order;
