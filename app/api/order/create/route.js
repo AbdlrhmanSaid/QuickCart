@@ -30,7 +30,7 @@ export async function POST(request) {
     });
     // clear cart
     const user = await User.findById(userId);
-    user.cart = {};
+    user.cartItems = {};
     await user.save();
     return NextResponse.json({
       success: true,

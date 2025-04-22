@@ -84,7 +84,7 @@ const OrderSummary = () => {
     if (user) {
       fetchUserAddresses();
     }
-  }, [user, isDropdownOpen]);
+  }, [user?.id]);
 
   return (
     <div className="w-full md:w-96 bg-gray-500/5 p-5">
