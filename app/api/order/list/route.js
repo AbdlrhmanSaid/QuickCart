@@ -12,7 +12,7 @@ export async function GET(request) {
 
     const orders = await Order.find({ userId })
       .populate("items.product")
-      .populate("Address");
+      .populate("address");
 
     return NextResponse.json({
       success: true,
