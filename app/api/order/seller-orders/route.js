@@ -3,6 +3,8 @@ import { getAuth } from "@clerk/nextjs/server";
 import dbConnect from "@/config/db";
 import Order from "@/models/Orders";
 import { NextResponse } from "next/server";
+import "@/models/Address"; // ✅ ضروري لتسجيل موديل Address
+import "@/models/Product"; // ✅ ضروري لتسجيل موديل Product
 
 export async function GET(request) {
   try {
